@@ -80,7 +80,7 @@ func createBook(c *gin.Context) {
 		return
 	}
 
-	if findBookIndexById(newBook.Id) == -1 {
+	if findBookIndexById(newBook.Id) != -1 {
 		c.IndentedJSON(http.StatusBadRequest, bookAlreadyExistErrorMessage)
 	} else {
 		books = append(books, newBook)

@@ -18,6 +18,7 @@ type errorMessage struct {
 
 var bookNotFoundErrorMessage = errorMessage{"We could not find the book you requested"}
 var outOfBookErrorMessage = errorMessage{"Unfortunately, we have run out of the book you requested. Please try again later."}
+var bookAlreadyExistErrorMessage = errorMessage{"Id for the book already exists. Try a different id."}
 
 var books = []book{
 	{Id: "1", Title: "In Search of Lost Time", Author: "Marcel Proust", Quantity: 2},
@@ -79,8 +80,12 @@ func createBook(c *gin.Context) {
 		return
 	}
 
-	books = append(books, newBook)
-	c.IndentedJSON(http.StatusOK, books)
+	if findBookIndexById(newBook.Id) == -1 {
+		c.IndentedJSON(http.StatusBadRequest, bookAlreadyExistErrorMessage)
+	} else {
+		books = append(books, newBook)
+		c.IndentedJSON(http.StatusOK, books)
+	}
 }
 
 func checkoutBook(c *gin.Context) {
